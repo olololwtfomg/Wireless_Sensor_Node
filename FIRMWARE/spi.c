@@ -12,8 +12,9 @@ void SPI_MasterInit(void)
 #else
     SPCR = (1<<SPE)|(1<<MSTR);
 #endif
-   SPSR = (1<<SPI2X); //DOUBLE SPEED WOOHOO
+   SPSR = (1<<SPI2X); //DOUBLE SPEED WOOHO
 }
+
 
 /*
 */

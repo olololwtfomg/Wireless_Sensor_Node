@@ -6,6 +6,8 @@
 	"USART.h"
 	"timers.h"
 
+1340830382 
+
 1340302553 c:\users\jaroslav múèka\work\wireless_sensor_node\firmware\initialization.h
 
 1340037089 source:c:\users\jaroslav múèka\work\wireless_sensor_node\firmware\protocol_low.c
@@ -21,6 +23,8 @@
 
 1340197088 c:\users\jaroslav múèka\work\wireless_sensor_node\firmware\spi.h
 	<inttypes.h>
+
+1340733944 h>
 
 1340198887 source:c:\users\jaroslav múèka\work\wireless_sensor_node\firmware\spi.c
 	<avr/io.h>
@@ -59,7 +63,78 @@
 1340834762 source:c:\users\jaroslav múèka\work\wireless_sensor_node\firmware\therm_ds18b20.c
 	"therm_ds18b20.h"
 
+1340834762 8b20.h"
+
 1340830382 c:\users\jaroslav múèka\work\wireless_sensor_node\firmware\therm_ds18b20.h
 	<avr/io.h>
 	<stdio.h>
+
+1343747021 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/USART.c
+	<avr/io.h>
+	<inttypes.h>
+	"bitops.h"
+	"USART.h"
+
+1343747021 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/bitops.h
+
+1343747021 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/USART.h
+	<avr/io.h>
+	<inttypes.h>
+
+1344325523 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/initialization.c
+	<avr/io.h>
+	<avr/sleep.h>
+	"spi.h"
+	"USART.h"
+	"initialization.h"
+	"timers.h"
+
+1343747021 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/spi.h
+	<inttypes.h>
+
+1344324730 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/rfm70.h
+
+1343747021 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/initialization.h
+
+1343747021 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/timers.h
+
+1343747021 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/main.c
+	<avr/io.h>
+	<avr/interrupt.h>
+	"initialization.h"
+	"USART.h"
+	"timers.h"
+
+1343747021 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/protocol_low.c
+
+1344327095 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/spi.c
+	<avr/io.h>
+	<inttypes.h>
+	"spi.h"
+	"bitops.h"
+
+1343747021 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/timers.c
+	"timers.h"
+	<avr/io.h>
+	<avr/interrupt.h>
+	<inttypes.h>
+	<avr/sleep.h>
+	"bitops.h"
+	"USART.h"
+	"therm_ds18b20.h"
+
+1340830382 /home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/therm_ds18b20.h
+	<avr/io.h>
+	<stdio.h>
+
+1344323111 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/macLevel.c
+
+1340834762 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/therm_ds18b20.c
+	"therm_ds18b20.h"
+
+1344324849 source:/home/olololwtfomg/work/Wireless_Sensor_Node/FIRMWARE/rfm70.c
+	"rfm70.h"
+	"bitops.h"
+	"spi.h"
+	<avr/pgmspace.h>
 

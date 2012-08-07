@@ -354,45 +354,49 @@ modded by olololwtfomg
 */
 
 #include "rfm70.h"
+#include "bitops.h"
 
 //#include "rfm70-config.h"
 
 #include "spi.h"
+#include <avr/pgmspace.h>
 
 // RFM70 SPI read and write commands
 #define RFM70_CMD_READ_REG            0x00
 #define RFM70_CMD_WRITE_REG           0x20
 
 //interrupt status
-#define STATUS_RX_DR    0x40
-#define STATUS_TX_DS    0x20
-#define STATUS_MAX_RT   0x10
+#define STATUS_RX_DR    (1<<RSTATUS_RX_DR)
+#define STATUS_TX_DS    (1<<RSTATUS_TX_DS)
+#define STATUS_MAX_RT   (1<<RSTATUS_MAX_RT)
 
-#define STATUS_TX_FULL  0x01
+#define STATUS_TX_FULL  (1<<RSTATUS_TX_FULL)
 
 //FIFO_STATUS
-#define FIFO_STATUS_TX_REUSE  0x40
-#define FIFO_STATUS_TX_FULL   0x20
-#define FIFO_STATUS_TX_EMPTY  0x10
+#define FIFO_STATUS_TX_REUSE  (1<<RFIFO_STATUS_TX_REUSE)
+#define FIFO_STATUS_TX_FULL   (1<<RFIFO_STATUS_TX_FULL)
+#define FIFO_STATUS_TX_EMPTY  (1<<RFIFO_STATUS_TX_EMPTY)
 
-#define FIFO_STATUS_RX_FULL   0x02
-#define FIFO_STATUS_RX_EMPTY  0x01
+#define FIFO_STATUS_RX_FULL   (1<<RFIFO_STATUS_RX_FULL)
+#define FIFO_STATUS_RX_EMPTY  (1<<RFIFO_STATUS_RX_EMPTY)
 
 
 
 // Bank0 register initialization values
 #define BANK0_ENTRIES 10
 const unsigned char Bank0_Reg[ BANK0_ENTRIES ][ 2 ]={
-   {  0, 0x0F }, // receive, enabled, CRC 2, enable interupts
-   {  1, 0x3F }, // auto-ack on all pipes enabled
-   {  2, 0x03 }, // Enable pipes 0 and 1
-   {  3, 0x03 }, // 5 bytes addresses
-   {  4, 0xff }, // auto retransmission delay 4000 ms, 15 times
-   {  5, 0x0A }, // channel 10
-   {  6 ,0x37 }, // data rate 1Mbit, power 5dbm, LNA gain high
-   {  7, 0x07 }, // why write this at all?? but seems required to work...
-   {  8, 0x00 }, // clear Tx packet counters
-   { 23, 0x00 }, // fifo status
+   {RFM70_REG_CONFIG        , (1<<CONFIG_EN_CRC)|(1<<CONFIG_CRCO)|(1<<CONFIG_PRIM_RX) },
+   // receive, enabled, CRC 2, enable interupts, don't turn reciever on on init
+   {RFM70_REG_EN_AA, 0x00 } , // turn off auto ack everywhere
+   {RFM70_REG_EN_RXADDR     , (1<<ERX_P0)|(1<<ERX_P1)}, // Enable pipes 0 and 1
+   {RFM70_REG_SETUP_AW      , SETUP_AW_3BYTE }, // 5 bytes addresses
+   {RFM70_REG_SETUP_RETR    , (SETUP_RETR_ARD<<4)|(SETUP_RETR_ARC) }, // auto retransmission delay 4000 ms, 0 times
+   {RFM70_REG_RF_CH         , REG_RF_CH }, // channel 10
+   {RFM70_REG_RF_SETUP      ,0x30  },
+   // data rate 1Mbit, power -5dbm, LNA low gain
+   {RFM70_REG_STATUS        , 0x07 }, // why write this at all?? but seems required to work...
+   {RFM70_REG_OBSERVE_TX    , 0x00 }, // clear Tx packet counters
+   {RFM70_REG_FIFO_STATUS   , 0x00 }, // fifo status
 };
 
    // default receive address data pipe 0:

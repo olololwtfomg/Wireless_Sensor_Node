@@ -43,7 +43,7 @@
 //
 //! \defgroup lowlevel low level interface
 //!
-//! The low-level interface provides read and write access to the 
+//! The low-level interface provides read and write access to the
 //! commands and registers of the RFM70.
 //!
 //! When a register ( < 0x20 ) is specified for a read or write command
@@ -56,8 +56,8 @@
 //! Besides the registers shown here (bank 0) the rfm70 also has a
 //! set of registers in bank 1. These bank 1 registers are initialized by
 //! the rfm70_init() call. If you want to do this yourself: the datasheet
-//! shows the required values, but in a very confusing way. The HopeRF 
-//! example code is a better reference. No (or very scarce) explanation 
+//! shows the required values, but in a very confusing way. The HopeRF
+//! example code is a better reference. No (or very scarce) explanation
 //! is given for these values.
 //!
 //! For most users, especially novices, it is recommended to use the
@@ -71,7 +71,7 @@
 //!
 //! The high-level interface provides functions for using the rfm70 module.
 //! These functions are implemneted by calling the appropriate low level
-//! functions. 
+//! functions.
 //! When possible, it is recommended to use only these high level functions.
 //! But when a functionality is needed that is missing it can be implemented
 //! using the low level interface.
@@ -144,6 +144,10 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //
 //***************************************************************************//
 
+/*
+bit deffinitions added by olololwtfomg
+*/
+
 //! CONFIG : rfm70 configuration register
 //
 //! Bits (0 = LSB):
@@ -157,6 +161,16 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 0 : 0 = transmit mode, 1 = receive mode
 #define RFM70_REG_CONFIG               0x00
 
+//#define CONFIG_RESERVED     7
+#define CONFIG_MASK_RX_DR   6
+#define CONFIG_MASK_TX_DS   5
+#define CONFIG_MASK_MAX_RT  4
+#define CONFIG_EN_CRC       3
+#define CONFIG_CRCO         2
+#define CONFIG_PWR_UP       1
+#define CONFIG_PRIM_RX      0
+
+
 //! EN_AA : enable auto ack on pipes
 //
 //! Bits (0 = LSB):
@@ -168,6 +182,13 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 1 : 0 disables auto ack on pipe 1, 1 enables
 //! - 0 : 0 disables auto ack on pipe 0, 1 enables
 #define RFM70_REG_EN_AA                0x01
+
+#define ENAA_P5    5
+#define ENAA_P4    4
+#define ENAA_P3    3
+#define ENAA_P2    2
+#define ENAA_P1    1
+#define ENAA_P0    0
 
 //! EN_RXADDR : enable receive pipes
 //
@@ -181,12 +202,24 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 0 : 0 disables receive pipe 0, 1 enables
 #define RFM70_REG_EN_RXADDR            0x02
 
+#define ERX_P5  5
+#define ERX_P4  4
+#define ERX_P3  3
+#define ERX_P2  2
+#define ERX_P1  1
+#define ERX_P0  0
+
 //! SETUP_AW : set address length
 //
 //! Bits (0 = LSB):
 //! - 7 .. 2 : reserved, must be 000000
 //! - 1 .. 0 : 00 = illegal, 01 = 3 bytes, 10 = 4 bytes, 11 = 5 bytes
 #define RFM70_REG_SETUP_AW             0x03
+
+#define SETUP_AW_3BYTE  0x01
+#define SETUP_AW_4BYTE  0x02
+#define SETUP_AW_5BYTE  0x03
+
 
 //! SETUP_RETR : retransmission settings
 //
@@ -195,10 +228,17 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 3 .. 0 : max number of retransmissions, 0 disableles retransmissions
 #define RFM70_REG_SETUP_RETR           0x04
 
+#define SETUP_RETR_ARD  15
+#define SETUP_RETR_ARC  0
+
+#define SETUP_RETR      (SETUP_RETR_ARD<<4)+SETUP_RETR_ARC
+
 //! RF_CH : RF channel (frequency)
 //
 //! The RF channel frequency is 2.4 MHz + n * 1 MHz.
 #define RFM70_REG_RF_CH                0x05
+
+#define REG_RF_CH   0x02
 
 //! RF_SETUP : RF setup: data rate, transmit power, LNA
 //
@@ -208,6 +248,11 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 2 .. 1 : transmit power, 00 = -10 dBm, 01 = -5 dBm, 10 = 0 dBm, 11 = 5 dBm
 //! - 0 : LNA gain, 0 = - 20 dB (low gain), 1 = standard
 #define RFM70_REG_RF_SETUP             0x06
+
+#define RF_SETUP_RF_DR          3
+#define RF_SETUP_RF_PWR1        2
+#define RF_SETUP_RF_PWR0        1
+#define RF_SETUP_RF_LNA_HCURR   0
 
 //! STATUS : status register
 //
@@ -228,12 +273,22 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! after the acknowledge has been received.
 #define RFM70_REG_STATUS               0x07
 
+#define STATUS_RBANK    7
+#define RSTATUS_RX_DR   6
+#define RSTATUS_TX_DS    5
+#define RSTATUS_MAX_RT   4
+#define STATUS_RX_P_NO3 3
+#define STATUS_RX_P_NO2 2
+#define STATUS_RX_P_NO1 1
+#define RSTATUS_TX_FULL  0
+
+
 //! OBSERVE_TX : lost and retransmitted packets
 //
 //! Bits (0 = LSB):
 //! - 7 .. 4 : counts number of lost packets
-//! - 3 .. 0 : counts retranmits 
-//! The lost packets counter will not increment beyond 15. 
+//! - 3 .. 0 : counts retranmits
+//! The lost packets counter will not increment beyond 15.
 //! It is reset by writing to the channel frequency register.
 //!
 //! The retransmits counter can not increment beyond 15 because
@@ -251,7 +306,7 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! RX_ADDR_PO : receive address for data pipe 0, 5 bytes
 //
 //! This is the (up to) 5 byte receive address for data pipe 0.
-//! For auto acknowledgement to work this address must be 
+//! For auto acknowledgement to work this address must be
 //! the same as the transmit address.
 #define RFM70_REG_RX_ADDR_P0           0x0A
 
@@ -293,7 +348,7 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! TX_ADDR : tranmsit adress, 5 bytes
 //
 //! This is the (up to) 5 byte adress used in transmitted packets.
-//! For auto acknowledgement to work this address must be 
+//! For auto acknowledgement to work this address must be
 //! the same as the pipe 0 receive address.
 #define RFM70_REG_TX_ADDR              0x10
 
@@ -345,6 +400,12 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 0   : high = receive FIFO is empty
 #define RFM70_REG_FIFO_STATUS          0x17
 
+#define RFIFO_STATUS_TX_REFUSE   6
+#define RFIFO_STATUS_TX_FULL     5
+#define RFIFO_STATUS_TX_EMPTY    4
+#define RFIFO_STATUS_RX_FULL     1
+#define RFIFO_STATUS_RX_EMPTY    0
+
 //! DYNPD: dynamic payload flags
 //
 //! Bits (0 = LSB):
@@ -355,9 +416,17 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 2   : high = dynamic payload enabled on data pipe 2
 //! - 1   : high = dynamic payload enabled on data pipe 1
 //! - 0   : high = dynamic payload enabled on data pipe 0
-//! Setting dynamic payload on pipe x requires EN_DPL 
+//! Setting dynamic payload on pipe x requires EN_DPL
 //! (in the special features flags register) and ENAA_Px.
 #define RFM70_REG_DYNPD                0x1C
+
+#define DPL_P5  5
+#define DPL_P4  4
+#define DPL_P3  3
+#define DPL_P2  2
+#define DPL_P1  1
+#define DPL_P0  0
+
 
 //! FEATURE: special fature flags
 //
@@ -365,8 +434,13 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! - 7:3 : reserved, only 00000 allowed
 //! - 2   : (EN_DPL) high = enable dynamic payload length
 //! - 1   : (EN_ACK_PAY) high = enable payload with ack
-//! - 0   : (EN_DYN_ACK) high = enables W_TX_PAYLOAD_NOACK command 
+//! - 0   : (EN_DYN_ACK) high = enables W_TX_PAYLOAD_NOACK command
 #define RFM70_REG_FEATURE              0x1D
+
+#define EN_DPL      2
+#define EN_ACK_PAY  1
+#define EN_DYN_ACK  0
+
 
 //! @}
 
@@ -376,7 +450,7 @@ typedef unsigned char rfm70_buffer [ RFM70_MAX_PACKET_LEN ];
 //! initialize the library and the rfm70 module
 //
 //! \ingroup lowlevel
-//! This function must be called before any other rfm70 
+//! This function must be called before any other rfm70
 //! function is called. It can also be called later (maybe even
 //! periodically) to re-initialize the interafce and the module.
 //!
@@ -396,15 +470,15 @@ void rfm70_init( void );
 //! read a single-byte command or register
 //
 //! \ingroup lowlevel
-//! This function reads and returns the a single-byte (8 bit) 
-//! RFM70 command or register reg. 
+//! This function reads and returns the a single-byte (8 bit)
+//! RFM70 command or register reg.
 unsigned char rfm70_register_read( unsigned char reg );
 
 //! read a multi-byte command or register
 //
 //! \ingroup lowlevel
-//! This function reads length bytes (8 bit each) from the RFM70 
-//! command or register reg into the buffer buf. 
+//! This function reads length bytes (8 bit each) from the RFM70
+//! command or register reg into the buffer buf.
 void rfm70_buffer_read(
    unsigned char reg,
    unsigned char *buf,
@@ -415,15 +489,15 @@ void rfm70_buffer_read(
 //
 //! \ingroup lowlevel
 //! This function writes the single-byte (8 bit) val to
-//! the  RFM70 command or register reg. 
+//! the  RFM70 command or register reg.
 void rfm70_register_write( unsigned char reg, unsigned char val );
 
 //! write a multi-byte command or register
 //
 //! \ingroup lowlevel
-//! This function writes length bytes (8 bit each) from 
-//! the buffer buf into the RFM70 
-//! command or register reg. 
+//! This function writes length bytes (8 bit each) from
+//! the buffer buf into the RFM70
+//! command or register reg.
 void rfm70_buffer_write(
    char reg,
    const unsigned char *buf,
@@ -463,7 +537,7 @@ void rfm70_mode_receive( void );
 //
 //! \ingroup highlevel
 //! This function puts the rfm70 in standby I mode,
-//! which reduces the power consumption 
+//! which reduces the power consumption
 //! (50 uA max).
 //! rfm70_mode_powerdown() reduces the power consumption
 //! even further, but requires a longer (but unspecified?)
@@ -475,7 +549,7 @@ void rfm70_mode_standby( void );
 //! \ingroup highlevel
 //! This function puts the rfm70 in power down mode,
 //! which reduces the power consumption to a minimum
-//! ( 3 uA max). 
+//! ( 3 uA max).
 void rfm70_mode_powerdown( void );
 
 //! set the rfm70 lna gain to low
@@ -495,22 +569,22 @@ void rfm70_lna_high( void );
 //! set the rfm70 channel frequency
 //
 //! \ingroup highlevel
-//! This function sets the frequency (channel) used by the rfm70 for 
+//! This function sets the frequency (channel) used by the rfm70 for
 //! receiving and transmitting to ( 2400 + ch ) MHz.
 //! The highest bit of val is ignored, so the frequency range is
-//! 2.4 .. 2.517 GHz. 
+//! 2.4 .. 2.517 GHz.
 //! Not all of these frequencies might be free to use in your jurisdiction.
 void rfm70_channel( unsigned char ch );
 
 //! set the rfm70 air data rate (baudrate)
 //
 //! \ingroup highlevel
-//! This function sets the air data rate used by the rfm70 for 
-//! receiving and transmitting. 
+//! This function sets the air data rate used by the rfm70 for
+//! receiving and transmitting.
 //! Allowed values are 1 and 2 (Mbits).
 //! A value of 0 will have the same effect as a avlaue of 1.
 //! A value > 2 will have the same effect as a value of 2.
-//! Note that this is the bitrate the rfm70 uses in the 
+//! Note that this is the bitrate the rfm70 uses in the
 //! packages that it sends. Due to various overhead factors
 //! the data rate that a user of the module can achieve is much lower,
 //! probably by a factor of 4.
@@ -530,7 +604,7 @@ void rfm70_crc_length( unsigned char len );
 //! set the rfm70 address length
 //
 //! \ingroup highlevel
-//! This function sets the length (in bytes) of the addresses used by 
+//! This function sets the length (in bytes) of the addresses used by
 //! the rfm70. Valid values are 3, 4 and 5.
 //! A value < 3 has the same effect as the value 3.
 //! A value > 5 has the same effect as the value 5.
@@ -545,16 +619,16 @@ void rfm70_address_length( unsigned char len );
 //! - level == 1 =>  -5 dBm
 //! - level == 2 =>   0 dBm
 //! - level == 3 =>  +5 dBm
-//! 
+//!
 //! A level > 3 has the same effect as level == 3.
-void rfm70_power( unsigned char level ); 
+void rfm70_power( unsigned char level );
 
 //! set the retransmission delay and number of attempts
 //
 //! \ingroup highlevel
 //! This function sets the delay d between retransmission attempts,
 //! and the maximum number of attempts n.
-//! The range of both arguments is 0..15. 
+//! The range of both arguments is 0..15.
 //! A value > 15 has the same effect as the value 15.
 //!
 //! The retransmission delay d is specified in steps of 250 us
@@ -571,7 +645,7 @@ void rfm70_retransmit_delay_attempts( unsigned char d, unsigned char n );
 //! read rfm70 retransmit count
 //
 //! \ingroup highlevel
-//! This function reads and reports the number of retransmissions 
+//! This function reads and reports the number of retransmissions
 //! for the last packet that was sent. The number of retransmissions
 //! is reset to zero when a new packet is sent.
 unsigned char rfm70_retransmit_count( void );
@@ -583,7 +657,7 @@ unsigned char rfm70_retransmit_count( void );
 //! The range of this count is 0..15, at 15 it will not
 //! increment when a next packet is lost.
 //! The lost packets count is reset implicitly when the channel
-//! is written (by calling rfm70_channel() ) or 
+//! is written (by calling rfm70_channel() ) or
 //! explicitly by calling rfm70_lost_packets_reset().
 unsigned char rfm70_lost_packets_count( void );
 
@@ -600,8 +674,8 @@ void rfm70_lost_packets_reset( void );
 //! This function enables or disables the auto acknowledgement
 //! function on the specified pipe.
 //!
-//! pipe must be in the range 0..5. 
-//! A pipe > 5 has the same effect as using pipe 5. 
+//! pipe must be in the range 0..5.
+//! A pipe > 5 has the same effect as using pipe 5.
 void rfm70_pipe_autoack( unsigned char pipe, unsigned char enabled );
 
 //! enables or disables a pipe
@@ -609,8 +683,8 @@ void rfm70_pipe_autoack( unsigned char pipe, unsigned char enabled );
 //! \ingroup highlevel
 //! This function enables or disables the specified pipe.
 //!
-//! pipe must be in the range 0..5. 
-//! A pipe > 5 has the same effect as using pipe 5. 
+//! pipe must be in the range 0..5.
+//! A pipe > 5 has the same effect as using pipe 5.
 void rfm70_pipe_enable( unsigned char d, unsigned char enabled );
 
 //! set the rfm70 pipe 0 address
@@ -640,7 +714,7 @@ void rfm70_receive_address_p1( const unsigned char address[ 5 ] );
 //! set the rfm70 pipe n (2..5) address
 //
 //! \ingroup highlevel
-//! This function sets the least significant byte of 
+//! This function sets the least significant byte of
 //! the receive address of the pipe n.
 //! The other bytes of the address are copied from pipe 1.
 void rfm70_receive_address_pn( unsigned char channel, unsigned char address );
@@ -648,8 +722,8 @@ void rfm70_receive_address_pn( unsigned char channel, unsigned char address );
 //! set the payload size for pipe n
 //
 //! \ingroup highlevel
-//! This function sets the size (= number of bytes, can be 1..32) 
-//! for packets to be received  on pipe n. 
+//! This function sets the size (= number of bytes, can be 1..32)
+//! for packets to be received  on pipe n.
 //! This setting must be the same as on the tranmitter.
 //! A size of 0 will enable dynamic length packets.
 //! A size > 32 will have the same effect as a size of 32.
@@ -660,7 +734,7 @@ void rfm70_channel_payload_size( unsigned char n, unsigned char size );
 //! \ingroup highlevel
 //! This function sets the (up to 5 byte) address used
 //! for all transmissions.
-void rfm70_transmit_address( const unsigned char *address );   
+void rfm70_transmit_address( const unsigned char *address );
 
 //! report whether the transmit fifo is full
 //
@@ -679,7 +753,7 @@ unsigned char rfm70_receive_fifo_empty( void );
 //! \ingroup highlevel
 //! This function transmits the specified message.
 //!
-//! The specified length must be less than or equal to 
+//! The specified length must be less than or equal to
 //! RFM70_MAX_PACKET_LEN (32).
 //! Specifying a larger length has the same effect as
 //! specifying a length of RFM70_MAX_PACKET_LEN.
@@ -687,8 +761,8 @@ unsigned char rfm70_receive_fifo_empty( void );
 //! The retransmission setting (set by
 //! the function rfm70_retransmit_delay_attempts) determines
 //! whether the message is transmitted on the air just once
-//! or repeatedly until an acknowledge is received. 
-//! 
+//! or repeatedly until an acknowledge is received.
+//!
 //! The RFM70 must be in transmit mode.
 void rfm70_transmit_message(
    const unsigned char *buf,
@@ -700,14 +774,14 @@ void rfm70_transmit_message(
 //! \ingroup highlevel
 //! This function transmits the specified message once.
 //!
-//! The specified length must be less than or equal to 
+//! The specified length must be less than or equal to
 //! RFM70_MAX_PACKET_LEN (32).
 //! Specifying a larger length has the same effect as
 //! specifying a length of RFM70_MAX_PACKET_LEN.
 //!
 //! The message is transmitted on the air once, irrespective
-//! of the retransmission setting. 
-//! 
+//! of the retransmission setting.
+//!
 //! The RFM70 must be in transmit mode.
 void rfm70_transmit_message_once(
    const unsigned char *buf,
@@ -727,10 +801,10 @@ unsigned char rfm70_receive_next_pipe( void );
 //! get payload length of the next message in receive FIFO
 //
 //! \ingroup highlevel
-//! This function returns length of the head message 
+//! This function returns length of the head message
 //! in the receive FIFO in bytes (1..32).
-//! 
-//! The RFM70 datasheet does not specify the value that is 
+//!
+//! The RFM70 datasheet does not specify the value that is
 //! returned when the receive FIFO is empty
 unsigned char rfm70_receive_next_length( void );
 
@@ -743,12 +817,12 @@ unsigned char rfm70_receive_next_length( void );
 //! from the receive FIFO. When no message is available
 //! this function returns false. When a message is avaible
 //! it is retrieved. The data is put in the buffer buf,
-//! the length is written to length, and the function 
+//! the length is written to length, and the function
 //! returns true.
 //!
 //! The size of the buffer buf must be at least
 //! RFM70_MAX_PACKET_LEN (32).
-//! 
+//!
 //! The RFM70 must be in transmit mode.
 unsigned char rfm70_receive(
    unsigned char * pipe,

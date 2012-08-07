@@ -9,8 +9,8 @@
 
 void init_periph()
 {
-    //SPI_MasterInit();
-    //rfm70_init();
+    SPI_MasterInit();
+    rfm70_init();
 }
 
 void init_io()
@@ -29,8 +29,8 @@ void init_io()
 void init_all()
 {
     init_io();
-    init_periph();
     USART_init(UBBR_VALUE);
+    init_periph();
     init_timer1();
     set_sleep_mode(SLEEP_MODE_IDLE);
 }
